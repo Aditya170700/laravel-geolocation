@@ -8,7 +8,7 @@
             </div>
 
             <div id="view-space">
-                <a href="#" class="btn btn-secondary">
+                <a href="{{ route('space.index') }}" class="btn btn-secondary">
                     <i class="fas fa-list"></i>
                 </a>
                 <a href="#" class="btn btn-secondary">
