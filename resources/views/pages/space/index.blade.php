@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
+    {{-- memanggil space.blade.php di folder components --}}
     <x-space></x-space>
     <div class="row justify-content-center">
         <div class="col-md-8">
