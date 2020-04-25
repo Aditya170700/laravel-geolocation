@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Space;
+use Illuminate\Support\Facades\Storage;
 
 class SpaceController extends Controller
 {
@@ -46,14 +47,29 @@ class SpaceController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title'       => ['required', 'min:3'],
-            'address'     => ['required', 'min:5'],
-            'description' => ['required', 'min:10'],
-            'latitude'    => ['required'],
-            'longitude'   => ['required'],
+            'title'       => 'required|min:3',
+            'address'     => 'required|min:5',
+            'description' => 'required|min:10',
+            'latitude'    => 'required',
+            'longitude'   => 'required',
+            'photo'       => 'required',
         ]);
 
-        $request->user()->spaces()->create($request->all());
+        $space = $request->user()->spaces()->create($request->except('photo'));
+
+        $spacePhotos = [];
+
+        foreach ($request->file('photo') as $file) {
+            $path = Storage::disk('public')->putFile('spaces', $file);
+
+            $spacePhotos[] = [
+                'space_id' => $space->id,
+                'path'     => $path,
+            ];
+        }
+
+        // photos -> relasi space dengan foto. function ada di model space
+        $space->photos()->insert($spacePhotos);
 
         return redirect()->route('space.index')->with('status', 'Space created successfuly!');
     }
@@ -124,6 +140,11 @@ class SpaceController extends Controller
         $space = Space::findOrFail($id);
         if ($space->user_id != request()->user()->id) {
             return redirect()->back();
+        }
+
+        // photos -> relasi space dengan foto. function ada di model space
+        foreach ($space->photos as $photo) {
+            Storage::delete('public/' . $photo->path);
         }
 
         $space->delete();
