@@ -44,7 +44,7 @@ if (navigator.geolocation) {
 
       		let marker = new H.map.Marker(objLocalCoord, {
       			volatility: true
-      		})
+      		});
       		marker.draggable = true;
       		map.addObject(marker);
 
@@ -111,12 +111,12 @@ if (navigator.geolocation) {
                                     data.forEach(function(value, index){
                                           let marker = new H.map.Marker({
                                                 lat: value.latitude, lng: value.longitude
-                                          });
+                                          })
                                           spaces.push(marker);
                                     })
                               })
                         )
-                  })
+                  });
             }
 
             function clearSpace(){
@@ -143,7 +143,14 @@ if (navigator.geolocation) {
 
                   init(objLocalCoord.lat, objLocalCoord.lng, 40);
             }
-	})
+      })
+
+      // open deriction
+      function openDirection(lat, lng, id){
+            // _self => buka di halaman yang sama
+            window.open(`/space/${id}?from=${objLocalCoord.lat},${objLocalCoord.lng}&to=${lat},${lng}`, "_self");
+      }
+
 } else {
 	console.log(error);
 }
